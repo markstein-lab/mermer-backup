@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>
+      Query - Open Genomics : Genome Enhancer
+    </title>
+  </head>
+  <body>
+    <div class="header">
+      <img src="{% static "search/fly.gif" %}"/>
+      <strong>
+        merMER
+      </strong>
+      <p>
+        This program enables you to search entire genomes for clusters of DNA sequences
+      </p>
+    </div>
+    <form class="pure-form pure-form-aligned" method="POST">
+      <fieldset>
+        <legend>
+          Search
+        </legend>
+        <div class="pure-control-group">
+          <label for="genome">
+            Genome: 
+          </label>
+          <select id="genome" name="genome">
+            <option value="dm6">
+              D. melanogaster
+            </option>
+          </select>
+        </div>
+        <div class="pure-control-group">
+          <label for="sequences">
+            Sequence(s): 
+            <span class="pure-form-message">
+              One sequence per line
+            </span>
+          </label>
+          <textarea cols="30" id="sequences" name="sequences" rows="2"></textarea>
+        </div>
+        <div class="pure-controls">
+          <button class="pure-button pure-button-primary" id="submit" type="submit">
+            Submit
+          </button>
+        </div>
+      </fieldset>
+    </form>
+    <script src="{% static "search/index.js" %}" type="text/javascript"></script>
+    <link href="{% static "search/pure-min.css" %}" rel="stylesheet"/>
+    <link href="{% static "search/style.css" %}" rel="stylesheet"/>
+  </body>
+</html>

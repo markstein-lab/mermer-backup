@@ -1,0 +1,25 @@
+.header * {
+    display: inline-block;
+}
+
+.header img {
+    vertical-align: top;
+}
+
+.header {
+    background: #802020;
+    color: #fff;
+}
+
+.sidebar {
+    margin-top: 0;
+}
+
+.sidebar {
+    background: #802020;
+    color: #fff;
+}
+
+form {
+    padding: 10px;
+}

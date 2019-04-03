@@ -1,0 +1,10 @@
+appdirs==1.4.3
+args==0.1.0
+astor==0.7.1
+clint==0.5.1
+Django==2.2
+funcparserlib==0.3.6
+hy==0.16.0+19.ga3962ad
+pytz==2018.9
+rply==0.7.7
+sqlparse==0.3.0

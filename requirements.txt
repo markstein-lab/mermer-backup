@@ -5,6 +5,8 @@ clint==0.5.1
 Django==2.2
 funcparserlib==0.3.6
 hy==0.16.0+19.ga3962ad
+PyHTML==1.3.1
 pytz==2018.9
 rply==0.7.7
+six==1.12.0
 sqlparse==0.3.0

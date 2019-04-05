@@ -1,0 +1,10 @@
+OBJ = readgbk.o searchstr2.o
+
+readgbk: $(OBJ)
+	cc $(OBJ)  -o $@
+
+.c.o: 
+	cc -g  -c $<
+
+clean:
+	rm -f $(OBJ)

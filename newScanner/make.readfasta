@@ -1,0 +1,10 @@
+OBJ = readfasta.o searchstr2.o
+
+readfasta: $(OBJ)
+	cc $(OBJ)  -o $@
+
+.c.o: 
+	cc -O  -c $<
+
+clean:
+	rm -f $(OBJ)

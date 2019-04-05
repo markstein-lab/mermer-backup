@@ -273,118 +273,120 @@ outerLoop:
    strcpy(chrLimit, line);
    ltdSearch = strlen(line);
    fprintf (save, "%s\n", line);
+   bool skipToSearch = false;
       
 //readInputLoop:
-do{
-    while(true){
-       if (fromTerminal != 0){
-           sprintf(output, "Type in motif %c:", patternID);
-           both(output);
-           getLine(line, stdin);   //read a motif from terminal
-           fprintf(save, "%s\n", line);
-           i = fixinput(line); //convert input to upper case
-           if (i) { // improper input detected
-              printf("Improper input character %c in position %d\n", line[i-1], i);
-              continue;
-           }
-           if (line[0] == 0) { // null input -- end of motifs
-              both("\n");
-              goto search;
-           }
-           motifs[motifCount].motif = malloc(strlen(line) + 1);
-           strcpy (motifs[motifCount].motif, line);
-           motifs[motifCount].name = patternID;
-           motifs[motifCount].direction = '+';
-           motifs[motifCount+1].motif = malloc(strlen(line)+1);
-           makerevcompl(motifs[motifCount].motif, motifs[motifCount+1].motif, 
-                        strlen(line));
-           motifs[motifCount+1].name = patternID;
-           motifs[motifCount+1].direction = '-';
-           motifs[motifCount+1].reverse = motifs[motifCount].motif;
-           motifs[motifCount].reverse = motifs[motifCount+1].motif;
-           motifCount += 2;
-           patternID++;
-           k++;
+    do{
+        while(true){
+           if (fromTerminal != 0){
+               sprintf(output, "Type in motif %c:", patternID);
+               both(output);
+               getLine(line, stdin);   //read a motif from terminal
+               fprintf(save, "%s\n", line);
+               i = fixinput(line); //convert input to upper case
+               if (i) { // improper input detected
+                  printf("Improper input character %c in position %d\n", line[i-1], i);
+                  continue;
+               }
+               if (line[0] == 0) { // null input -- end of motifs
+                  both("\n");
+                  skipToSearch = true;
+                  break;
+               }
+               motifs[motifCount].motif = malloc(strlen(line) + 1);
+               strcpy (motifs[motifCount].motif, line);
+               motifs[motifCount].name = patternID;
+               motifs[motifCount].direction = '+';
+               motifs[motifCount+1].motif = malloc(strlen(line)+1);
+               makerevcompl(motifs[motifCount].motif, motifs[motifCount+1].motif, 
+                            strlen(line));
+               motifs[motifCount+1].name = patternID;
+               motifs[motifCount+1].direction = '-';
+               motifs[motifCount+1].reverse = motifs[motifCount].motif;
+               motifs[motifCount].reverse = motifs[motifCount+1].motif;
+               motifCount += 2;
+               patternID++;
+               k++;
+              }
           }
-      }
-
-    readFromForm:
-       for (i = 'A'; i < 'K'; i++) {
-          line[0] = 'S'; line[1] = i; line[2] = 0; //construct name of field i
-          //result = sassoc(line, terminalInput);
-          sprintf(result, "%s", sassoc(line, terminalInput));
-          if (strlen(result) == 0) continue;
-          j = fixinput(result);
-          if (j) {//improper input detected
-             sprintf (output, "In field %c improper input character %c in position %d\n", i, result[i-1], j);
-             both(output);
-             errcount++;
-          }
-          k++;
-          motifs[motifCount].motif = malloc(strlen(result) + 1);
-          strcpy (motifs[motifCount].motif, result);
-          motifs[motifCount].name = i;
-          motifs[motifCount].direction = '+';
-          motifs[motifCount+1].motif = malloc(strlen(result)+1);
-          makerevcompl(motifs[motifCount].motif, motifs[motifCount+1].motif, 
-                       strlen(result));
-          motifs[motifCount+1].name = i;
-          motifs[motifCount+1].direction = '-';
-          motifs[motifCount+1].reverse = motifs[motifCount].motif;
-          motifs[motifCount].reverse = motifs[motifCount+1].motif;
-          motifCount += 2;
-       }
-       //Get cluster size
-       sprintf(line, "%s", sassoc("CS", terminalInput));  
-       fprintf(save, "Minimum number of motifs required in a cluster: ");
-       i = checkMinNum(line, &minGroupSize);  
-       errcount += i;
+        if(!skipToSearch){
+           for (i = 'A'; i < 'K'; i++) {
+              line[0] = 'S'; line[1] = i; line[2] = 0; //construct name of field i
+              //result = sassoc(line, terminalInput);
+              sprintf(result, "%s", sassoc(line, terminalInput));
+              if (strlen(result) == 0) continue;
+              j = fixinput(result);
+              if (j) {//improper input detected
+                 sprintf (output, "In field %c improper input character %c in position %d\n", i, result[i-1], j);
+                 both(output);
+                 errcount++;
+              }
+              k++;
+              motifs[motifCount].motif = malloc(strlen(result) + 1);
+              strcpy (motifs[motifCount].motif, result);
+              motifs[motifCount].name = i;
+              motifs[motifCount].direction = '+';
+              motifs[motifCount+1].motif = malloc(strlen(result)+1);
+              makerevcompl(motifs[motifCount].motif, motifs[motifCount+1].motif, 
+                           strlen(result));
+              motifs[motifCount+1].name = i;
+              motifs[motifCount+1].direction = '-';
+              motifs[motifCount+1].reverse = motifs[motifCount].motif;
+              motifs[motifCount].reverse = motifs[motifCount+1].motif;
+              motifCount += 2;
+           }
+           //Get cluster size
+           sprintf(line, "%s", sassoc("CS", terminalInput));  
+           fprintf(save, "Minimum number of motifs required in a cluster: ");
+           i = checkMinNum(line, &minGroupSize);  
+           errcount += i;
  
-       //Get boolean control expression
-       sprintf(boolExp, "%s", sassoc("BC", terminalInput));
-       fprintf(save, "Boolean Condition: ");
-       i = checkBoolExpr(boolExp);
-       errcount += i;
+           //Get boolean control expression
+           sprintf(boolExp, "%s", sassoc("BC", terminalInput));
+           fprintf(save, "Boolean Condition: ");
+           i = checkBoolExpr(boolExp);
+           errcount += i;
 
-       //Get window size
-       sprintf(line, "%s", sassoc("WS", terminalInput));
-       fprintf(save, "Cluster Size: ");
-       i = checkWindowSize(line, &windowSize);
-       errcount += i;
+           //Get window size
+           sprintf(line, "%s", sassoc("WS", terminalInput));
+           fprintf(save, "Cluster Size: ");
+           i = checkWindowSize(line, &windowSize);
+           errcount += i;
 
  
-       sprintf(line, "%s", sassoc("GN", terminalInput));
-       if (strlen(line)) {
-          printf("List of requested genes is %s<br>", line);
-          geneList = malloc (sizeof(int) * strlen(line));
-          ptr = line;
-          while (strlen(ptr)) {
-             sscanf(ptr, "%s", result);
-             ptr += strlen(result);
-             if (*ptr == ',') ptr++;
-             while (*ptr == ' ') ptr++;
-             for (i = 0; i < synCount; i++) {
-                 if (strcmp((char *)geneName[i], result) == 0) {
-                    geneList[numberOfGenes] = geneNumber[i];
-                    numberOfGenes++;
-                    break;
+           sprintf(line, "%s", sassoc("GN", terminalInput));
+           if (strlen(line)) {
+              printf("List of requested genes is %s<br>", line);
+              geneList = malloc (sizeof(int) * strlen(line));
+              ptr = line;
+              while (strlen(ptr)) {
+                 sscanf(ptr, "%s", result);
+                 ptr += strlen(result);
+                 if (*ptr == ',') ptr++;
+                 while (*ptr == ' ') ptr++;
+                 for (i = 0; i < synCount; i++) {
+                     if (strcmp((char *)geneName[i], result) == 0) {
+                        geneList[numberOfGenes] = geneNumber[i];
+                        numberOfGenes++;
+                        break;
+                     }
                  }
-             }
-             if (i == synCount) {
-                printf("Gene %s was not found for this genome<br>", result);
-             }
-          }      
+                 if (i == synCount) {
+                    printf("Gene %s was not found for this genome<br>", result);
+                 }
+              }      
 
-       }
+           }
    
-       sprintf(line, "%s", sassoc("GD", terminalInput));
-       geneDistance = 0;
-       sscanf(line, "%d", &geneDistance);
+           sprintf(line, "%s", sassoc("GD", terminalInput));
+           geneDistance = 0;
+           sscanf(line, "%d", &geneDistance);
    
-       if (errcount) return 0; //if errors in form, abandon search because
-                             //all error messages have been output to screen
- 
-       if (k == 0) {
+           if (errcount) return 0; //if errors in form, abandon search because
+                                 //all error messages have been output to screen
+        }
+            //skipToSearch 
+           if (k == 0) {
           both("Please enter at least one pattern to search for.\n");
      }while(fromTerminal);
       exit(0);
@@ -470,10 +472,11 @@ do{
    both(output);
 #endif
  
-   
+   bool goToSearch = false;
    do{
        if (fromTerminal == 0) {
-          goto readyToSearch;
+          goToSearch = true;
+          break;
        }
    
        sprintf(output, "Enter minimum number of motifs required in a cluster: "); 
@@ -481,32 +484,34 @@ do{
        getLine(line, stdin);
    }while (checkMinNum(line, &minGroupSize));
 
-readBooleanExpression:
-   sprintf(output, "Enter boolean condition (hit return for none):\n");
-   both(output);
-   getLine(boolExp, stdin); 
-   i = checkBoolExpr(boolExp);
-   if (i) goto readBooleanExpression; 
+   if(!goToSearch){
+     do{
+       sprintf(output, "Enter boolean condition (hit return for none):\n");
+       both(output);
+       getLine(boolExp, stdin); 
+      while(checkBoolExpr(boolExp));
 
-readWindowSize:
-   sprintf(output, "Enter window size (max #bp in cluster): ");
-   both(output);
-   getLine(line, stdin);
-   fprintf(save, " %s\n", line);
-   windowSize = 0;
-   sscanf(line, "%d", &windowSize);
-   if (windowSize <= 0) {
-      sprintf(output, 
-        "response to this question must be a positive integer.\n");
-      both(output);
-      if (fromTerminal) goto readWindowSize;
-      else errcount++;
+    readWindowSize:
+    do{
+       sprintf(output, "Enter window size (max #bp in cluster): ");
+       both(output);
+       getLine(line, stdin);
+       fprintf(save, " %s\n", line);
+       windowSize = 0;
+       sscanf(line, "%d", &windowSize);
+       if (windowSize <= 0) {
+          sprintf(output, 
+            "response to this question must be a positive integer.\n");
+          both(output);
+          if (fromTerminal) continue;
+          else errcount++;
+       }
+       both("\n");
+
+       if (errcount) return 1;
+     }while(fromTerminal);
    }
-   both("\n");
-
-   if (errcount) return 1;
-
-readyToSearch:
+//readyToSearch:
    if (fromTerminal == 0) {
       both("Motifs searched for:\n");
       for (i = 0; i < motifCount; i++) {

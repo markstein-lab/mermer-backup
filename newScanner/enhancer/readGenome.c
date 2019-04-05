@@ -53,65 +53,68 @@ void readGenome() {
       both("File mapping did not work!\n");
       exit(1);
    }
-   goto genomeHasBeenRead;
+/*
+   //Goto - expected if statement but always skips this chunk of code
+   {
 
-#if (scanWidth == 1 || scanWidth == 2 || scanWidth == 4 )
-   DNAs = (unsigned char *)DNAstring;
-   for (i = 0; i < (DNALen/4 + 8); i++) {
-      DNAs[i] = fgetc(qnames);
-      if(feof(qnames)) break;
-   }
+    #if (scanWidth == 1 || scanWidth == 2 || scanWidth == 4 )
+       DNAs = (unsigned char *)DNAstring;
+       for (i = 0; i < (DNALen/4 + 8); i++) {
+          DNAs[i] = fgetc(qnames);
+          if(feof(qnames)) break;
+       }
    
-   counter = i;
-#ifdef DEBUG
-   sprintf(message, "compact genome took %u bytes (%u nucleotides)\n",
-      counter, DNALen);
-   both(message);
-#endif
-   fclose(qnames);
-#else
-   j = 0;
-   k = 0;
-   word = 0;
-   for (i = 0; i < (DNALen/4 + 8); i++) {
-      c = fgetc(qnames);
-      if (j + 8 <= 2*scanWidth) {
-         word = (word << 8) + c;
-         j = j + 8; 
-         if (j == 2*scanWidth) {
-            DNAstring[k++] = word;
-            j = 0;
-            word = 0;
-         }
-      }
-      else if (j + 8 > 2*scanWidth) {
-         word <<= 2*scanWidth - j;
-         word += (c>>(8 - 2*scanWidth + j));
-         DNAstring[k++] = word;
-         j = 8 - 2*scanWidth + j;
-         word = c & ((1<<j) - 1);
-         if (j == 2*scanWidth) {
-            DNAstring[k++] = word;
-            word = 0;
-            j = 0;
-         }
-      }         
-   }
-   counter = k;
-#ifdef DEBUG
-   sprintf(message, "i = %d, k = %d, size of word = %d\n", i, k, sizeof(word));
-   both (message);
-   sprintf(message, "compact genome took %d bytes (%d nucleotide)\n",
-      counter*sizeof(word), DNALen);
-   both (message);
-#endif
-   fclose (qnames);
-#endif
+       counter = i;
+    #ifdef DEBUG
+       sprintf(message, "compact genome took %u bytes (%u nucleotides)\n",
+          counter, DNALen);
+       both(message);
+    #endif
+       fclose(qnames);
+    #else
+       j = 0;
+       k = 0;
+       word = 0;
+       for (i = 0; i < (DNALen/4 + 8); i++) {
+          c = fgetc(qnames);
+          if (j + 8 <= 2*scanWidth) {
+             word = (word << 8) + c;
+             j = j + 8; 
+             if (j == 2*scanWidth) {
+                DNAstring[k++] = word;
+                j = 0;
+                word = 0;
+             }
+          }
+          else if (j + 8 > 2*scanWidth) {
+             word <<= 2*scanWidth - j;
+             word += (c>>(8 - 2*scanWidth + j));
+             DNAstring[k++] = word;
+             j = 8 - 2*scanWidth + j;
+             word = c & ((1<<j) - 1);
+             if (j == 2*scanWidth) {
+                DNAstring[k++] = word;
+                word = 0;
+                j = 0;
+             }
+          }         
+       }
+       counter = k;
+    #ifdef DEBUG
+       sprintf(message, "i = %d, k = %d, size of word = %d\n", i, k, sizeof(word));
+       both (message);
+       sprintf(message, "compact genome took %d bytes (%d nucleotide)\n",
+          counter*sizeof(word), DNALen);
+       both (message);
+    #endif
+       fclose (qnames);
+    #endif
 
-//The genome has now been read in.
-//Next, we read in supporting data, that describes the chromosomes and
-//tells where the genes are on the chromosomes
-
+    //The genome has now been read in.
+    //Next, we read in supporting data, that describes the chromosomes and
+    //tells where the genes are on the chromosomes
+}
+*/
 genomeHasBeenRead:
    master = fopen(fullName(pathName, "master.txt"), "r");
    numberOfChromosomes = 0;

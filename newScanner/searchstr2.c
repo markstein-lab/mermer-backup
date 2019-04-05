@@ -2,20 +2,25 @@
 //Copyright (c) in silico Labs, LLC 2006
 #include <stdlib.h>
 //#include <malloc.h>
+typedef enum { false = 0, true = !false } bool;
 
 unsigned char *  searchstr(unsigned char * string, unsigned char * pattern) {
+    bool skipToNextPos = false; 
 	unsigned char *ptr, *s, *t;
+
 	for (ptr = string; *ptr ; ptr++) {
 		if (*ptr != *pattern) continue;
 		s = ptr + 1;
 		t = pattern + 1;
 		while (*t) {
-			if (*s != *t) goto nextposition;
+			if (*s != *t){
+                skipToNextPos = true;
+                break;
+            }
 			s++; t++;
 		}
+        if(skipToNextPos) continue;
 		return (s);
-nextposition:
-		;
    }
    return (unsigned char *)0;
 }

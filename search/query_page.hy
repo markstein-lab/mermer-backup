@@ -1,5 +1,7 @@
 (import [pyhtml [*]])
 
+(import [search.template_common [paths-to-static]])
+
 (require [hy.contrib.walk [let]])
 
 (require [search.template_common [build-page]])
@@ -45,9 +47,4 @@ out for a search.
           "Query"
           ((form :class_ "pure-form pure-form-aligned")
            (form-required)))]
-    (+ "{% load static %}\n"
-       (-> generated
-           (.replace "fly.gif" "{% static \"search/fly.gif\" %}")
-           (.replace "index.js" "{% static \"search/index.js\" %}")
-           (.replace "pure-min.css" "{% static \"search/pure-min.css\" %}")
-           (.replace "style.css" "{% static \"search/style.css\" %}")))))
+    (paths-to-static generated)))

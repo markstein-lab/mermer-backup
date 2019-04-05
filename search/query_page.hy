@@ -5,6 +5,9 @@
 (require [search.template_common [build-page]])
 
 (defn form-required []
+  """Build the portion of the query form that must be filled
+out for a search.
+"""
   (fieldset
     (legend "Search")
 
@@ -36,6 +39,7 @@
         "Submit")))))
 
 (defn build-query-page []
+  "Build and return the query page's Django template."
   (let [generated
         (build-page
           "Query"

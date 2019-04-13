@@ -194,204 +194,203 @@ void reportClusters() {
             // bump up cluster count for chromosome
             group_count++;  //we found a cluster! count it.
             clusterNumber = group_count;  //for external use
-            if (trial == 0) {
-               goto bookkeepping;
-            }
+            if (trial != 0) {
+               
  
-            //if (count_only != 'C') 
-            //The next two commented-out statements are old style output
-            //The following 6 executable statements give equivalent output
-            //sprintf(resultstring, "%s %s pos %d (length %d) in %s:%s\n", 
-            //        longsig, hitlist, (*ax) - arm[ichr], 
-            //        endcluster - (*ax) + 1, 
-            //        chromoName[ichr], annotName[ichr]);
-            //both(resultstring);
-            //if (count_only != 'C' && gene_names == 0) 
-            //    fprintf(save, "%s  %s pos %d (length %d) in %s:%s\n", 
-            //            longsig, hitlist, (*ax) - arm[ichr], 
-            //            endcluster - (*ax) + 1, chromo_name[ichr], 
-            //            annot_name[ichr]);
-            //fprintf(archive, "%x %x %s\n", 
-            //                 *ax, *(ay-1) + strlen(*(py-1)) - 1, longsig);
+                //if (count_only != 'C') 
+                //The next two commented-out statements are old style output
+                //The following 6 executable statements give equivalent output
+                //sprintf(resultstring, "%s %s pos %d (length %d) in %s:%s\n", 
+                //        longsig, hitlist, (*ax) - arm[ichr], 
+                //        endcluster - (*ax) + 1, 
+                //        chromoName[ichr], annotName[ichr]);
+                //both(resultstring);
+                //if (count_only != 'C' && gene_names == 0) 
+                //    fprintf(save, "%s  %s pos %d (length %d) in %s:%s\n", 
+                //            longsig, hitlist, (*ax) - arm[ichr], 
+                //            endcluster - (*ax) + 1, chromo_name[ichr], 
+                //            annot_name[ichr]);
+                //fprintf(archive, "%x %x %s\n", 
+                //                 *ax, *(ay-1) + strlen(*(py-1)) - 1, longsig);
    
-            sprintf(resultstring, "\nCluster %d length %ld bp\n",
-                    group_count, endcluster - (*ax) + 1);
-            both(resultstring);
-            sprintf(resultstring, "%s	MERMER	Cluster	%lu	%lu	.	.	.	Cluster%d search=%s\n", 
-                chromoName[ichr], start, stop, clusterNumber, searchStrings);
-            fprintf(tbl, "%s", resultstring);
-            both(resultstring);
-            sprintf(resultstring, 
-               "MOTIFS %s at positions %s\n", longsig, hitlist);
-            both(resultstring);
-            if (utr3 | utr5 | orf | cds) { //special treatment for searches 
-                               //restricted to mRNAs.
-               displayUTRHit(annotation_index, whereIndex, 
-                             spliceIndex, start, stop, resultstring);
-            } else {
-               //Normal case
-               sprintf(resultstring, 
-                  "On chromosome %s at position %lu (%s:%s)\n",
-                  chromoName[ichr], (*ax) - chrStart(ichr), chromoName[ichr],
-                  annotName[ichr]); 
-            }
-            both(resultstring);
+                sprintf(resultstring, "\nCluster %d length %ld bp\n",
+                        group_count, endcluster - (*ax) + 1);
+                both(resultstring);
+                sprintf(resultstring, "%s	MERMER	Cluster	%lu	%lu	.	.	.	Cluster%d search=%s\n", 
+                    chromoName[ichr], start, stop, clusterNumber, searchStrings);
+                fprintf(tbl, "%s", resultstring);
+                both(resultstring);
+                sprintf(resultstring, 
+                   "MOTIFS %s at positions %s\n", longsig, hitlist);
+                both(resultstring);
+                if (utr3 | utr5 | orf | cds) { //special treatment for searches 
+                                   //restricted to mRNAs.
+                   displayUTRHit(annotation_index, whereIndex, 
+                                 spliceIndex, start, stop, resultstring);
+                } else {
+                   //Normal case
+                   sprintf(resultstring, 
+                      "On chromosome %s at position %lu (%s:%s)\n",
+                      chromoName[ichr], (*ax) - chrStart(ichr), chromoName[ichr],
+                      annotName[ichr]); 
+                }
+                both(resultstring);
                
-            if (annotation_index>= 0 && (utr3 | utr5 | orf | cds) == 0) {
-               //printf("annotation index = %d\n", annotation_index);
-               //fprintf( save, "annotation index = %d\n", annotation_index);
+                if (annotation_index>= 0 && (utr3 | utr5 | orf | cds) == 0) {
+                   //printf("annotation index = %d\n", annotation_index);
+                   //fprintf( save, "annotation index = %d\n", annotation_index);
               
-               //get the full annotation info into resultstring
-               primeNames[0] = 1;  //list of gene names involved in hit
+                   //get the full annotation info into resultstring
+                   primeNames[0] = 1;  //list of gene names involved in hit
                
-               fullannot(annotation_index, 
-                 *ax - arm[ichr] /*+ 1 *//*- map[annotation_index].start*/,
-                 endcluster - arm[ichr]/* + 1*/ /*-map[annotation_index].start*/,
-                 resultstring); 
+                   fullannot(annotation_index, 
+                     *ax - arm[ichr] /*+ 1 *//*- map[annotation_index].start*/,
+                     endcluster - arm[ichr]/* + 1*/ /*-map[annotation_index].start*/,
+                     resultstring); 
               
-               //if (count_only != 'C') {
+                   //if (count_only != 'C') {
    
-               both(resultstring);
-               both("\n");
-               //if (gene_names) { //option to print gene name synonyms
+                   both(resultstring);
+                   both("\n");
+                   //if (gene_names) { //option to print gene name synonyms
    
-               //this if-statement was used to print all synonyms after each
-               //found cluster. No longer used
-               //if (strlen(resultstring)) {
-               //   fprintf(save, 
-               //      "Here are the genes and their synonyms associated" 
-               //      " with this cluster\n");
-               //   printallsynonyms(resultstring, synCount);
-               //}
+                   //this if-statement was used to print all synonyms after each
+                   //found cluster. No longer used
+                   //if (strlen(resultstring)) {
+                   //   fprintf(save, 
+                   //      "Here are the genes and their synonyms associated" 
+                   //      " with this cluster\n");
+                   //   printallsynonyms(resultstring, synCount);
+                   //}
    
-               //}
-               //else {
-               //   fprintf(save, "%s\n\n", resultstring);
-               //}
-               //}
-            }
-            else {
-               // full_results = 0;
-            }
-            //if (full_results && gene_names == 0) {
-            //   fprintf(save, "          Window start: Annot %s, pos %d.", 
-            //           annot_name[ichr], *ax - arm[ichr] - ref + 1);
-            //   fprintf(save, "\n");
-            //}
+                   //}
+                   //else {
+                   //   fprintf(save, "%s\n\n", resultstring);
+                   //}
+                   //}
+                }
+                else {
+                   // full_results = 0;
+                }
+                //if (full_results && gene_names == 0) {
+                //   fprintf(save, "          Window start: Annot %s, pos %d.", 
+                //           annot_name[ichr], *ax - arm[ichr] - ref + 1);
+                //   fprintf(save, "\n");
+                //}
                
-            //if (full_results) {
-            //   //fetch entire cluster
-if (fromTerminal) goto bookkeepping;
-                 if (fromTerminal == 0) {
-                    printf("<div id='content%d' style='display: none'>", 
-                       clusterNumber);
-                    printf("<pre><font size='3'>\n");
-                    printf("<font color='grey'>");
-                 }
-                 start = *ax - 200;
-                 stop = endcluster + 200;
-                 if (!(utr3 || utr5 || orf || cds)) {
-                    if (start < arm[ichr]) start = arm[ichr];
-                    if (stop >= arm[ichr+1]) stop = arm[ichr+1] - 1;
-                 }
-                 clusterDNA = malloc(stop - start + 2);
-                 for (cp = start, i = 0; cp <= stop; cp++, i++) {
-                    clusterDNA[i] = DNAchar((cp)) | 0x20;  //force lower case
- //                   if (utr3 | utr5 && clusterDNA[i] == 't') {
- //                       clusterDNA[i] = 'u';
- //                   }
-                 }
-                 j = i;
-                 clusterDNA[i] = 0;
-                 for (az = ax, pz = px; az < ay; az++, pz++) {
-                    if (az == ax || *az >= az[-1] + strlen(pz[-1].motif)) {
-                       for (cp = *az, i = 0; 
-                            i < (int)strlen(pz->motif); cp++, i++) {
-                          clusterDNA[cp - start ] &= 0xDF;  //make upper case
-                       }
-                    }
-                 }
+                //if (full_results) {
+                //   //fetch entire cluster
+    if (!fromTerminal){ //goto bookkeeping
+                     if (fromTerminal == 0) {
+                        printf("<div id='content%d' style='display: none'>", 
+                           clusterNumber);
+                        printf("<pre><font size='3'>\n");
+                        printf("<font color='grey'>");
+                     }
+                     start = *ax - 200;
+                     stop = endcluster + 200;
+                     if (!(utr3 || utr5 || orf || cds)) {
+                        if (start < arm[ichr]) start = arm[ichr];
+                        if (stop >= arm[ichr+1]) stop = arm[ichr+1] - 1;
+                     }
+                     clusterDNA = malloc(stop - start + 2);
+                     for (cp = start, i = 0; cp <= stop; cp++, i++) {
+                        clusterDNA[i] = DNAchar((cp)) | 0x20;  //force lower case
+     //                   if (utr3 | utr5 && clusterDNA[i] == 't') {
+     //                       clusterDNA[i] = 'u';
+     //                   }
+                     }
+                     j = i;
+                     clusterDNA[i] = 0;
+                     for (az = ax, pz = px; az < ay; az++, pz++) {
+                        if (az == ax || *az >= az[-1] + strlen(pz[-1].motif)) {
+                           for (cp = *az, i = 0; 
+                                i < (int)strlen(pz->motif); cp++, i++) {
+                              clusterDNA[cp - start ] &= 0xDF;  //make upper case
+                           }
+                        }
+                     }
                   
-                 chCount = start - *ax;
-                 clIndex = 0;
-                 line[0] = 0;
-                 motifEnd = j + 1;
-                 motifStart[clusterSize] = j+1;
-                 for (i = 0; i < j; i+=10) {
-                    for (k = 0; k < 10; k++) {
-                       if (   fromTerminal == 0 
-                           && chCount == motifStart[clIndex]) {
-                          //When encountering first motif, end grey text
-                          //and make subsequent characters bold 
-                          if (strlen(line)) {
-                             PRLINE(line);
-                             line[0] = 0;
-                          }
-                          if (clIndex == 0) {
-                             strcat(line, "</font><b>");
-                          }
-                          //determine where motif info is
-                          for (motifIndex = 0; motifIndex < numberOfMotifs;
-                               motifIndex+=2) {
-                             if (motifs[motifIndex].name == signature[clIndex]) {
-                                break;
-                             }
-                          }
-                          if (motifIndex >= numberOfMotifs) motifIndex = 0;
-                          //highlight motif in appropriate color
-                          strcat(line, "<FONT style='BACKGROUND-COLOR:");
-                          strcat(line, colorName[motifs[motifIndex].name-'A']);
-                          strcat(line, "'>");
-                          motifEnd = motifStart[clIndex] + 
-                             strlen(motifs[motifIndex].motif)
-                             - 1;
-                          clIndex++;
-                          printf("%s", line);
-                          line[0] = 0;
-                       }
-                       m = strlen(line);
-                       line[m] = clusterDNA[i+k];
-                       line[m+1] = 0;
-                       if (    fromTerminal == 0
-                            && chCount == motifEnd) {
-                          //turn off the highlighting
-                          if (strlen(line)) {
-                             PRLINE(line);
-                             line[0] = 0;
-                          }
-                          strcat(line, "</FONT>");
-                          if (clIndex == clusterSize) {
-                             //end of cluster output -- end bold 
-                             //and return to grey font
-                             strcat(line, "</b><font color='grey'>");
-                          }
-                          printf("%s", line);
-                          line[0] = 0;
-                       }
-                       chCount++;
+                     chCount = start - *ax;
+                     clIndex = 0;
+                     line[0] = 0;
+                     motifEnd = j + 1;
+                     motifStart[clusterSize] = j+1;
+                     for (i = 0; i < j; i+=10) {
+                        for (k = 0; k < 10; k++) {
+                           if (   fromTerminal == 0 
+                               && chCount == motifStart[clIndex]) {
+                              //When encountering first motif, end grey text
+                              //and make subsequent characters bold 
+                              if (strlen(line)) {
+                                 PRLINE(line);
+                                 line[0] = 0;
+                              }
+                              if (clIndex == 0) {
+                                 strcat(line, "</font><b>");
+                              }
+                              //determine where motif info is
+                              for (motifIndex = 0; motifIndex < numberOfMotifs;
+                                   motifIndex+=2) {
+                                 if (motifs[motifIndex].name == signature[clIndex]) {
+                                    break;
+                                 }
+                              }
+                              if (motifIndex >= numberOfMotifs) motifIndex = 0;
+                              //highlight motif in appropriate color
+                              strcat(line, "<FONT style='BACKGROUND-COLOR:");
+                              strcat(line, colorName[motifs[motifIndex].name-'A']);
+                              strcat(line, "'>");
+                              motifEnd = motifStart[clIndex] + 
+                                 strlen(motifs[motifIndex].motif)
+                                 - 1;
+                              clIndex++;
+                              printf("%s", line);
+                              line[0] = 0;
+                           }
+                           m = strlen(line);
+                           line[m] = clusterDNA[i+k];
+                           line[m+1] = 0;
+                           if (    fromTerminal == 0
+                                && chCount == motifEnd) {
+                              //turn off the highlighting
+                              if (strlen(line)) {
+                                 PRLINE(line);
+                                 line[0] = 0;
+                              }
+                              strcat(line, "</FONT>");
+                              if (clIndex == clusterSize) {
+                                 //end of cluster output -- end bold 
+                                 //and return to grey font
+                                 strcat(line, "</b><font color='grey'>");
+                              }
+                              printf("%s", line);
+                              line[0] = 0;
+                           }
+                           chCount++;
 
-                       if (clusterDNA[i+k] == 0) break;
-                    } //for k
+                           if (clusterDNA[i+k] == 0) break;
+                        } //for k
                     
    
-                    PRLINE(line);
-                    PRLINE(" ");
-                    line[0] = 0;
+                        PRLINE(line);
+                        PRLINE(" ");
+                        line[0] = 0;
    
-                    if (i%60 == 50) {
-                       PRLINE("\n");
-                    }
-                 } //for i
-                 fprintf(save, "\n");
-                 free(clusterDNA);
-                 if (fromTerminal == 0) {
-                    printf("</font></pre>"); 
-                    printf("</div>");
-                 }
+                        if (i%60 == 50) {
+                           PRLINE("\n");
+                        }
+                     } //for i
+                     fprintf(save, "\n");
+                     free(clusterDNA);
+                     if (fromTerminal == 0) {
+                        printf("</font></pre>"); 
+                        printf("</div>");
+                     }
                            
-                 both("\n");
-   
-            //}
+                     both("\n");
+    }
+}
 bookkeepping:
                ax = aq;
                px = pq;
@@ -445,9 +444,37 @@ int limitedCluster(int a) {
 
    if (cds) {
       foundCds = 1;
-      goto summary;
+   }else{
+   if (exon || intron){
+    //testIntrons:
+       if (intron) {
+          for (i = 0; i < map[a].numberOfmRNAs; i++) {
+             for (j = 0; j < exonCount(a,i) - 1; j++) {
+                if (map[a].mrnaInfo[i*rowSize(a) + 2*j + 5] < start &&
+                    map[a].mrnaInfo[i*rowSize(a) + 2*j + 6] > stop) {
+                   foundIntron = (map[a].direction == '+') ?
+                                  j+1 : (exonCount(a,i)) - j - 1;
+                   return foundUtr3 | foundUtr5 | foundIntron | foundExon | foundOrf | foundCds; //summary
+                }
+             }
+          }
+       }
+    //testExons:
+       if (exon) {
+          for (i = 0; i < map[a].numberOfmRNAs; i++) {
+             for (j = 0; j < exonCount(a,i); j++) {
+                if (map[a].mrnaInfo[i*rowSize(a) + 2*j + 4] <= start &&
+                    map[a].mrnaInfo[i*rowSize(a) + 2*j + 5] >= stop) {
+                   foundExon = (map[a].direction == '+') ? 
+                               j+1 : exonCount(a,i) - j;
+                   return foundUtr3 | foundUtr5 | foundIntron | foundExon | foundOrf | foundCds; //summary
+                }
+             }
+          }
+       }
+      }
+       return foundUtr3 | foundUtr5 | foundIntron | foundExon | foundOrf | foundCds; //summary
    }
-   if (exon || intron) goto testIntrons;
    left = right = 0;
    // Compute size of right UTR
    j = 2*exonCount(a,k) + 2;
@@ -490,35 +517,5 @@ testUTR5:
       else if (map[a].direction == '-' &&
           mrnaInfo[altArg+1].mrnaStart - start <= right) foundUtr5 = 1;
    }
-   goto summary;
-
-testIntrons:
-   if (intron) {
-      for (i = 0; i < map[a].numberOfmRNAs; i++) {
-         for (j = 0; j < exonCount(a,i) - 1; j++) {
-            if (map[a].mrnaInfo[i*rowSize(a) + 2*j + 5] < start &&
-                map[a].mrnaInfo[i*rowSize(a) + 2*j + 6] > stop) {
-               foundIntron = (map[a].direction == '+') ?
-                              j+1 : (exonCount(a,i)) - j - 1;
-               goto summary;
-            }
-         }
-      }
-   }
-testExons:
-   if (exon) {
-      for (i = 0; i < map[a].numberOfmRNAs; i++) {
-         for (j = 0; j < exonCount(a,i); j++) {
-            if (map[a].mrnaInfo[i*rowSize(a) + 2*j + 4] <= start &&
-                map[a].mrnaInfo[i*rowSize(a) + 2*j + 5] >= stop) {
-               foundExon = (map[a].direction == '+') ? 
-                           j+1 : exonCount(a,i) - j;
-               goto summary;
-            }
-         }
-      }
-   }
-
-summary:
-   return foundUtr3 | foundUtr5 | foundIntron | foundExon | foundOrf | foundCds;
+   return foundUtr3 | foundUtr5 | foundIntron | foundExon | foundOrf | foundCds; //search
 }

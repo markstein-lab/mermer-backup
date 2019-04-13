@@ -274,11 +274,12 @@ outerLoop:
    ltdSearch = strlen(line);
    fprintf (save, "%s\n", line);
    bool skipToSearch = false;
+   bool exitW = true;
       
 //readInputLoop:
     do{
-        while(true){
-           if (fromTerminal != 0){
+        skipToSearch = false; 
+        while(fromTerminal != 0){
                sprintf(output, "Type in motif %c:", patternID);
                both(output);
                getLine(line, stdin);   //read a motif from terminal
@@ -307,8 +308,8 @@ outerLoop:
                motifCount += 2;
                patternID++;
                k++;
-              }
-          }
+        }
+          //}
         if(!skipToSearch){
            for (i = 'A'; i < 'K'; i++) {
               line[0] = 'S'; line[1] = i; line[2] = 0; //construct name of field i
@@ -375,7 +376,6 @@ outerLoop:
                     printf("Gene %s was not found for this genome<br>", result);
                  }
               }      
-
            }
    
            sprintf(line, "%s", sassoc("GD", terminalInput));
@@ -385,12 +385,13 @@ outerLoop:
            if (errcount) return 0; //if errors in form, abandon search because
                                  //all error messages have been output to screen
         }
-            //skipToSearch 
+            //skipToSearch should go hee
            if (k == 0) {
-          both("Please enter at least one pattern to search for.\n");
-     }while(fromTerminal);
-      exit(0);
-   }
+            both("Please enter at least one pattern to search for.\n");
+            exit(0);
+          }
+     }while(k== 0 && fromTerminal);
+  // }
    motifs[motifCount].motif = 0;
    tables = makeTables(motifs);
 #ifdef DEBUG
@@ -489,10 +490,11 @@ outerLoop:
        sprintf(output, "Enter boolean condition (hit return for none):\n");
        both(output);
        getLine(boolExp, stdin); 
-      while(checkBoolExpr(boolExp));
+      }while(checkBoolExpr(boolExp));
 
     readWindowSize:
     do{
+        exitW = true; 
        sprintf(output, "Enter window size (max #bp in cluster): ");
        both(output);
        getLine(line, stdin);
@@ -503,13 +505,14 @@ outerLoop:
           sprintf(output, 
             "response to this question must be a positive integer.\n");
           both(output);
-          if (fromTerminal) continue;
-          else errcount++;
+          if (fromTerminal) { exitW = false;}
+          else{
+          errcount++;
+          }
        }
-       both("\n");
-
-       if (errcount) return 1;
-     }while(fromTerminal);
+     }while(!exitW);
+     both("\n");
+     if (errcount) {return 1;}
    }
 //readyToSearch:
    if (fromTerminal == 0) {

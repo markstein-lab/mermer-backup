@@ -7,7 +7,6 @@
 #include "timer.h"
 
 typedef enum { false = 0, true = !false } bool;
-
 /*************
 #define nextDNA() \
    if (shift >= 0) { \
@@ -22,19 +21,6 @@ typedef enum { false = 0, true = !false } bool;
    }
 **********/
 
-/*
-Steps:
-
-1. Find goto
-2. Rewrite code at selection
-3. Test to make sure functionaility still works
-4. Repeat
-
-5. Refactor the rest of code
-
-
-*/
-
    int whereIndex;
    int numberOfTimesCalled ;
    int numberOfTimesMotifFound;
@@ -44,11 +30,13 @@ Steps:
    int findSplice(unsigned int x);
    void outputSummary();
    int invalid(unsigned int, unsigned int);
+   int counts[500];
+   unsigned long int *oldav;   
 
 int do_the_search(unsigned long int start, //where to start in the genome
                    unsigned long int stop  //where to stop search in the genome
                   ) {
-
+    
    TIMEVAL time1, time2;
    int j, depth;
    unsigned long int i;
@@ -56,14 +44,14 @@ int do_the_search(unsigned long int start, //where to start in the genome
    unsigned long int index;
    LOOKUPWORD mask0, mask1, mask2, mask3, mask4, mask5, mask6;
    LOOKUPWORD mask[500];
-   int counts[500];
 
 #ifdef STATS
-  // int counts[500];
+   //int counts[500];
 #endif
+   for (int i = 0; i < 500; i++) counts[i] = 0;
    unsigned int temp;
    void identifyMatches(LOOKUPWORD, unsigned long int, int);
-   unsigned long int *oldav;
+   //unsigned long int *oldav;
 
    startIndex = start/scanWidth;
    stopIndex = stop/scanWidth;
@@ -73,8 +61,8 @@ int do_the_search(unsigned long int start, //where to start in the genome
    oldav = av;
 
 #ifdef STATS
-   for (i = 0; i < 500; i++) counts[i] = 0;
-   numberOfTables = -1; //defaults in switch //TODO: change
+   //for (i = 0; i < 500; i++) counts[i] = 0;
+   goto  generaldeep;
 #endif
     bool firstTime1 = true;
     bool firstTime2 = true;
@@ -101,170 +89,125 @@ int do_the_search(unsigned long int start, //where to start in the genome
             mask0 = matchTable(0, index);
         }
    }
-   switch (numberOfTables) {
+   switch (numberOfTables) { //notice no breaks in table, so case 4 will go to case 3, 2,5, and so on
       case 4: 
-        i = startIndex;
-        updateMasks(0, i);
-        i++;
-        if (i > stopIndex) return finished(counts, numberOfTables);
+            i = startIndex;
+            updateMasks(0, i);
+            i++;
+            if (i > stopIndex) return finished(counts, numberOfTables);
 
-        firstTime1 = true;
-        firstTime2 = true; 
+            firstTime1 = true;
+            firstTime2 = true; 
 
-        while(true){
-            while(mask2 == 0 || firstTime2){
-                firstTime2 = false; 
+            while(true){
+                while(mask2 == 0 || firstTime2){
+                    firstTime2 = false; 
 
-                while(mask1 == 0 || firstTime1){
-                    firstTime1 = false;
-                    updateMasks(1, i);
+                    while(mask1 == 0 || firstTime1){
+                        firstTime1 = false;
+                        updateMasks(1, i);
+                        i++;
+                        if (i > stopIndex) return finished(counts, numberOfTables);
+                    }
+                    updateMasks(2, i);
                     i++;
                     if (i > stopIndex) return finished(counts, numberOfTables);
                 }
-                updateMasks(2, i);
+
+                updateMasks(3,i);
+                if (mask3) { // we have found one or more matches
+                  identifyMatches(mask3, i, numberOfTables);
+                }
                 i++;
                 if (i > stopIndex) return finished(counts, numberOfTables);
             }
-
-            updateMasks(3,i);
-            if (mask3) { // we have found one or more matches
-              identifyMatches(mask3, i, numberOfTables);
-            }
-            i++;
-            if (i > stopIndex) return finished(counts, numberOfTables);
-        }
-      case 3: 
-       i = startIndex;
-       updateMasks(1, i);
-       i++;
-       if (i > stopIndex) return finished(counts, numberOfTables);
-
-        while(true){
+      case 3:
+           i = startIndex;
            updateMasks(1, i);
            i++;
            if (i > stopIndex) return finished(counts, numberOfTables);
 
-           if (mask1 == 0) continue;
-
-            updateMasks(2, i);
-           if (mask2) { // we have found one or more matches
-              identifyMatches(mask2, i, numberOfTables);
-           }
-           i++;
-           if (i > stopIndex) return finished(counts, numberOfTables);
-        }
-      case 2: 
-       i = startIndex;   //look up if assigning mask1 a value and idenitfying a match will do anything
-       updateMasks(0, i);
-       i++;
-       if (i > stopIndex) return finished(counts, numberOfTables);
-
-       while(true){
-           updateMasks(1, i);
-           if (mask1) { // we have found one or more matches
-              identifyMatches(mask1, i, numberOfTables);
-           }
-           i++;
-           if (i > stopIndex) return finished(counts, numberOfTables);
-        }
-        //continue onto next case
-      case 5: 
-       i = startIndex;
-       updateMasks(0,i);
-       i++;
-       if (i > stopIndex) return finished(counts, numberOfTables);
-       firstTime1 = true;
-       firstTime2 = true;   
-       firstTime3 = true;
-       while(mask3 == 0 || firstTime3){
-           firstTime3 = false; 
-
-           while(mask2 == 0 || firstTime2){
-                firstTime2 = false;
-
-               while(mask1 == 0 || firstTime1){
+           firstTime1 = true; 
+            while(true){
+               while(firstTime1 || mask1 == 0){
                    firstTime1 = false; 
-                   updateMasks(1,i);
-                   i++;
-               if (i > stopIndex) return finished(counts, numberOfTables);
-               }
-               index = getDNA(i);
-               updateMasks(2,i);
-               i++;
-               if (i > stopIndex) return finished(counts, numberOfTables);
-           }
-
-           updateMasks(3,i);
-           i++;
-           if (i > stopIndex) return finished(counts, numberOfTables);
-           if(mask3 == 0) continue;
-
-           updateMasks(4,i);
-           if (mask4) { // we have found one or more matches
-              identifyMatches(mask4, i, numberOfTables);
-           }
-           i++;
-           if (i > stopIndex) return finished(counts, numberOfTables);
-       }
-       
-      case 6: 
-       i = startIndex;
-       updateMasks(0,i);
-       i++;
-       if (i > stopIndex) return finished(counts, numberOfTables);
-
-       firstTime1 = true;
-       firstTime2 = true;
-       firstTime3 = true;
-       firstTime4 = true; 
-
-       while(true){
-           while(mask4 == 0 || firstTime4){
-               firstTime4 = false;
-               while(mask3 == 0 || firstTime3){
-                   firstTime3 = false;
-                   while(mask2 == 0 || firstTime2){
-                       firstTime2 = false;
-                       while(mask1 == 0 || firstTime1){
-                           firstTime1 = false;
-
-                           updateMasks(1,i);
-                           i++;
-                           if (i > stopIndex) return finished(counts, numberOfTables);
-                       }
-                       updateMasks(2, i);
-                       i++;
-                       if (i > stopIndex) return finished(counts, numberOfTables);
-                   }
-                   updateMasks(3,i);
+                   updateMasks(1, i);
                    i++;
                    if (i > stopIndex) return finished(counts, numberOfTables);
                }
+
+               updateMasks(2, i);
+               if (mask2) { // we have found one or more matches
+                  identifyMatches(mask2, i, numberOfTables);
+               }
+               i++;
+               if (i > stopIndex) return finished(counts, numberOfTables);
+            }
+      case 2: 
+           i = startIndex;   //look up if assigning mask1 a value and idenitfying a match will do anything
+           updateMasks(0, i);
+           i++;
+           if (i > stopIndex) return finished(counts, numberOfTables);
+
+           while(true){
+               updateMasks(1, i);
+               if (mask1) { // we have found one or more matches
+                  identifyMatches(mask1, i, numberOfTables);
+               }
+               i++;
+               if (i > stopIndex) return finished(counts, numberOfTables);
+            }
+            //continue onto next case     
+      case 5: 
+           i = startIndex;
+           updateMasks(0,i);
+           i++;
+           if (i > stopIndex) return finished(counts, numberOfTables);
+           firstTime1 = true;
+           firstTime2 = true;   
+           firstTime3 = true;
+           while(mask3 == 0 || firstTime3){
+               firstTime3 = false; 
+
+               while(mask2 == 0 || firstTime2){
+                    firstTime2 = false;
+
+                   while(mask1 == 0 || firstTime1){
+                       firstTime1 = false; 
+                       updateMasks(1,i);
+                       i++;
+                   if (i > stopIndex) return finished(counts, numberOfTables);
+                   }
+                   index = getDNA(i);
+                   updateMasks(2,i);
+                   i++;
+                   if (i > stopIndex) return finished(counts, numberOfTables);
+               }
+
+               updateMasks(3,i);
+               i++;
+               if (i > stopIndex) return finished(counts, numberOfTables);
+               if(mask3 == 0) continue;
+
                updateMasks(4,i);
+               if (mask4) { // we have found one or more matches
+                  identifyMatches(mask4, i, numberOfTables);
+               }
                i++;
                if (i > stopIndex) return finished(counts, numberOfTables);
            }
-          updateMasks(5,i);
-          if (mask5) { // we have found one or more matches
-              identifyMatches(mask5, i, numberOfTables);
-          }
-          i++;
-          if (i > stopIndex) return finished(counts, numberOfTables);
-       }
-      case 7: 
-       i = startIndex;
-       updateMasks(0,i);
-       i++;
-       if (i > stopIndex) return finished(counts, numberOfTables);
+      case 6: 
+           i = startIndex;
+           updateMasks(0,i);
+           i++;
+           if (i > stopIndex) return finished(counts, numberOfTables);
 
-       firstTime1 = true;
-       firstTime2 = true;
-       firstTime3 = true;
-       firstTime4 = true; 
-       firstTime5 = true;
+           firstTime1 = true;
+           firstTime2 = true;
+           firstTime3 = true;
+           firstTime4 = true; 
 
-       while(true){
-            while(mask5 == 0 || firstTime5){
+           while(true){
                while(mask4 == 0 || firstTime4){
                    firstTime4 = false;
                    while(mask3 == 0 || firstTime3){
@@ -290,143 +233,170 @@ int do_the_search(unsigned long int start, //where to start in the genome
                    i++;
                    if (i > stopIndex) return finished(counts, numberOfTables);
                }
-                updateMasks(5,i);
-                i++;
-                if (i > stopIndex) return finished(counts, numberOfTables);
-            }
-            updateMasks(6,i);
-            if (mask6) { // we have found one or more matches
-                identifyMatches(mask6, i, numberOfTables);
-            }
-            i++;
-            if (i > stopIndex) return finished(counts, numberOfTables);
-       }
-      case 1: 
-       for(i = startIndex; i != stopIndex; i++){
-           updateMasks(0, i);
-           if (mask0) { // we have found one or more matches
-              identifyMatches(mask0, i, numberOfTables);
-           }
-       }  
-        return finished(counts, numberOfTables);
-      default: 
-       i = startIndex;
-   index = getDNA(i);
-   mask[0] = matchTable(0, index);
-   i++;
-   if (i > stopIndex) return finished(counts, numberOfTables);
-   firstTime1 = true;
-   firstTime2 = true;
-   firstTime3 = true;
-   bool skipSection = false;
-   while(true){
-    if(skipSection){
-       while((mask[3] == 0 || numberOfTables == 4) || firstTime3){
-            firstTime3 = false;
-
-           while((mask[2] == 0 || numberOfTables == 3) || firstTime2){
-            firstTime2 = false;
-            while((mask[1] == 0 | numberOfTables == 2) || firstTime1){
-                firstTime1 = false;
-                index = getDNA(i);
-                //updateMaskArrayAndIdentifyMatches(1, i, stopIndex, mask);
-           mask[1] = mask[0] & matchTable(1, index);
-           mask[0] = matchTable(0, index);
-           if (numberOfTables == 2 && mask[1]) {
-              identifyMatches(mask[1], i, numberOfTables);
-           }
-                       if (i > stopIndex) return finished(counts, numberOfTables);
-                #ifdef STATS
-                   counts[1]++;
-                #endif
-             }
-            index = getDNA(i);
-            //updateMaskArrayAndIdentifyMatches(2, i, stopIndex, mask);
-         mask[2] = mask[1] & matchTable(2, index);
-           mask[1] = mask[0] & matchTable(1, index);
-           mask[0] = matchTable(0, index);
-           if (numberOfTables == 3 && mask[2]) {
-              identifyMatches(mask[2], i, numberOfTables);
-           }
-           i++;
-                       if (i > stopIndex) return finished(counts, numberOfTables);
- 
-            #ifdef STATS
-               counts[2]++;
-            #endif
-            }
-            index = getDNA(i);
-            //updateMaskArrayAndIdentifyMatches(3, i, stopIndex, mask);
-       mask[3] = mask[2] & matchTable(3, index);
-       mask[2] = mask[1] & matchTable(2, index);
-       mask[1] = mask[0] & matchTable(1, index);
-       mask[0] = matchTable(0, index);
-       if (numberOfTables == 4 && mask[3]) {
-          identifyMatches(mask[3], i, numberOfTables);
-       }
-       i++;
-                   if (i > stopIndex) return finished(counts, numberOfTables);
-        #ifdef STATS
-           counts[3]++;
-        #endif
-       }
-       depth = 4;
-    }
-           index = getDNA(i);
-           for (j = depth; j > 0; j--) {
-              mask[j] = mask[j-1] & matchTable(j, index);
-           }
-           mask[0] = matchTable(0, index);
-        #ifdef STATS
-           counts[depth]++;
-        #endif
-           if (mask[depth]) { //either we found a match or stack is growing
-              if (depth == (numberOfTables-1)) { //we found a match
-                 identifyMatches(mask[depth], i, numberOfTables);
-                 i++;
-                 if (i > stopIndex) return finished(counts, numberOfTables);
-                 if (mask[depth-1]) continue;
-                 depth--;
-                 while ((depth ) && (mask[depth-1] == 0)) depth--; 
-                 if (depth < 4){ 
-                    skipSection = false;
-                    firstTime3 = true;
-                 }
-                 continue;
+              updateMasks(5,i);
+              if (mask5) { // we have found one or more matches
+                  identifyMatches(mask5, i, numberOfTables);
               }
               i++;
               if (i > stopIndex) return finished(counts, numberOfTables);
-              depth++;  //increase stack depth
-              skipSection = true; 
-              continue;
-           }else{
-               i++;
-               break;
            }
-       }
-   }
+      case 7: 
+           i = startIndex;
+           updateMasks(0,i);
+           i++;
+           if (i > stopIndex) return finished(counts, numberOfTables);
 
-   void updateMaskArrayAndIdentifyMatches(int n, int stopIndex){
-        index = getDNA(i);
-        switch(n){
-           case 3:
-                mask[3] = mask[2] & matchTable(3, index);
-           case 2:
-                mask[2] = mask[1] & matchTable(2, index);
-           case 1:
-                mask[1] = mask[0] & matchTable(1, index);
-           case 0:
-                mask[0] = matchTable(0, index);
-        }
-       if (numberOfTables == (n + 1) && mask[n]) {
-          identifyMatches(mask[n], i, numberOfTables);
-       }
-       i++;
-   }
+           firstTime1 = true;
+           firstTime2 = true;
+           firstTime3 = true;
+           firstTime4 = true; 
+           firstTime5 = true;
 
+           while(true){
+                while(mask5 == 0 || firstTime5){
+                   while(mask4 == 0 || firstTime4){
+                       firstTime4 = false;
+                       while(mask3 == 0 || firstTime3){
+                           firstTime3 = false;
+                           while(mask2 == 0 || firstTime2){
+                               firstTime2 = false;
+                               while(mask1 == 0 || firstTime1){
+                                   firstTime1 = false;
 
+                                   updateMasks(1,i);
+                                   i++;
+                                   if (i > stopIndex) return finished(counts, numberOfTables);
+                               }
+                               updateMasks(2, i);
+                               i++;
+                               if (i > stopIndex) return finished(counts, numberOfTables);
+                           }
+                           updateMasks(3,i);
+                           i++;
+                           if (i > stopIndex) return finished(counts, numberOfTables);
+                       }
+                       updateMasks(4,i);
+                       i++;
+                       if (i > stopIndex) return finished(counts, numberOfTables);
+                   }
+                    updateMasks(5,i);
+                    i++;
+                    if (i > stopIndex) return finished(counts, numberOfTables);
+                }
+                updateMasks(6,i);
+                if (mask6) { // we have found one or more matches
+                    identifyMatches(mask6, i, numberOfTables);
+                }
+                i++;
+                if (i > stopIndex) return finished(counts, numberOfTables);
+           }
+      case 1: 
+          for(i = startIndex; i != stopIndex; i++){
+               updateMasks(0, i);
+               if (mask0) { // we have found one or more matches
+                  identifyMatches(mask0, i, numberOfTables);
+               }
+          }  
+          return finished(counts, numberOfTables);
+      default: 
+           i = startIndex;
+           index = getDNA(i);
+           mask[0] = matchTable(0, index);
+           i++;
+           if (i > stopIndex) return finished(counts, numberOfTables);
+           firstTime1 = true;
+           firstTime2 = true;
+           firstTime3 = true;
+           bool skipSection = false;
+           while(true){
+            if(skipSection){
+               while((mask[3] == 0 || numberOfTables == 4) || firstTime3){
+                    firstTime3 = false;
+
+                   while((mask[2] == 0 || numberOfTables == 3) || firstTime2){
+                    firstTime2 = false;
+                    while((mask[1] == 0 | numberOfTables == 2) || firstTime1){
+                        firstTime1 = false;
+                        index = getDNA(i);
+                        //updateMaskArrayAndIdentifyMatches(1, i, stopIndex, mask);
+                   mask[1] = mask[0] & matchTable(1, index);
+                   mask[0] = matchTable(0, index);
+                   if (numberOfTables == 2 && mask[1]) {
+                      identifyMatches(mask[1], i, numberOfTables);
+                   }
+                               if (i > stopIndex) return finished(counts, numberOfTables);
+                        #ifdef STATS
+                           counts[1]++;
+                        #endif
+                     }
+                    index = getDNA(i);
+                    //updateMaskArrayAndIdentifyMatches(2, i, stopIndex, mask);
+                 mask[2] = mask[1] & matchTable(2, index);
+                   mask[1] = mask[0] & matchTable(1, index);
+                   mask[0] = matchTable(0, index);
+                   if (numberOfTables == 3 && mask[2]) {
+                      identifyMatches(mask[2], i, numberOfTables);
+                   }
+                   i++;
+                               if (i > stopIndex) return finished(counts, numberOfTables);
+ 
+                    #ifdef STATS
+                       counts[2]++;
+                    #endif
+                    }
+                    index = getDNA(i);
+                    //updateMaskArrayAndIdentifyMatches(3, i, stopIndex, mask);
+               mask[3] = mask[2] & matchTable(3, index);
+               mask[2] = mask[1] & matchTable(2, index);
+               mask[1] = mask[0] & matchTable(1, index);
+               mask[0] = matchTable(0, index);
+               if (numberOfTables == 4 && mask[3]) {
+                  identifyMatches(mask[3], i, numberOfTables);
+               }
+               i++;
+                           if (i > stopIndex) return finished(counts, numberOfTables);
+                #ifdef STATS
+                   counts[3]++;
+                #endif
+               }
+               depth = 4;
+            }
+                   index = getDNA(i);
+                   for (j = depth; j > 0; j--) {
+                      mask[j] = mask[j-1] & matchTable(j, index);
+                   }
+                   mask[0] = matchTable(0, index);
+                #ifdef STATS
+                   counts[depth]++;
+                #endif
+                   if (mask[depth]) { //either we found a match or stack is growing
+                      if (depth == (numberOfTables-1)) { //we found a match
+                         identifyMatches(mask[depth], i, numberOfTables);
+                         i++;
+                         if (i > stopIndex) return finished(counts, numberOfTables);
+                         if (mask[depth-1]) continue;
+                         depth--;
+                         while ((depth ) && (mask[depth-1] == 0)) depth--; 
+                         if (depth < 4){ 
+                            skipSection = false;
+                            firstTime3 = true;
+                         }
+                         continue;
+                      }
+                      i++;
+                      if (i > stopIndex) return finished(counts, numberOfTables);
+                      depth++;  //increase stack depth
+                      skipSection = true; 
+                      continue;
+                   }else{
+                       i++;
+                       break;
+                   }
+               }
+           }
 }
-int finished(int numberOfTables, int counts[]){
+
+int finished(int counts[], int numberOfTables){
 #ifdef STATS
    for (i = 1; i < numberOfTables; i++) {
       printf("  Level %d depth count = %d\n", i, counts[i]);
@@ -436,10 +406,8 @@ int finished(int numberOfTables, int counts[]){
    printf("Number of times motif found signalled: %d\n", numberOfTimesCalled);
    printf("Number of times motifs found: %d\n", numberOfTimesMotifFound);
 #endif
-   return 0;
-   //return av-oldav;  
+   return av-oldav;  
 }
-
 void identifyMatches(LOOKUPWORD mask, //state mask identifying matches
                      unsigned long int index, //index into the genome
                      int depth  //depth of stack when match found
@@ -463,7 +431,6 @@ void identifyMatches(LOOKUPWORD mask, //state mask identifying matches
    imax = (numberOfMotifs<statesPerWord)? numberOfMotifs:statesPerWord;
    testbit = 1<<(scanWidth-1);
    whichMotifs = 0;
-   bool gotoNextMotif = false;
    for (i = 0; i < imax; i++) {
       test = mask & extract;
       if (test) {
@@ -475,19 +442,16 @@ void identifyMatches(LOOKUPWORD mask, //state mask identifying matches
                 //i + statesPerWord, i + 2*statesPerWord, etc
                 for (k = i; k < numberOfMotifs; k+=statesPerWord) {
                    length = strlen(motifs[k].motif);
-                   gotoNextMotif = false;
                    for (m = 0; m < length; m++) {
                       c = DNAchar(position + m);
                       if (isnotok(motifs[k].motif[m], c)) {
-                         gotoNextMotif = true;
-                         break;
+                         goto nextmotif;
                       }
-                   } 
-                   if(gotoNextMotif) continue;
+                   }  
                    //Test that there are no "invalid characters" in the genome
                    //where the match was found
                    if (invalid(position, length)) {
-                     continue; //if found motif spans invalid characters
+                      goto nextmotif;  //if found motif spans invalid characters
                                        //in the genome, ignore the hit
                    }    
                    
@@ -512,7 +476,7 @@ void identifyMatches(LOOKUPWORD mask, //state mask identifying matches
                    *pv = motifs[k];
                    av++;
                    pv++;
-
+nextmotif:
                   ;
                 }  //for k ...
              }  // if (bit & mask) ...

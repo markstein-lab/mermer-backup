@@ -26,3 +26,12 @@ void getTime(TIMEVAL *t) {
 #endif
 }
 
+long getDiffNanosecs(TIMEVAL *first, TIMEVAL *second)
+{
+#ifdef WIN32
+		return 0;
+#else
+		return (second->tv_sec - first->tv_sec) * 1000000000 +
+				(second->tv_nsec - first->tv_nsec);
+#endif
+}

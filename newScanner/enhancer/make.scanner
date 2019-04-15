@@ -17,7 +17,7 @@
 OBJ = displayUTRHit.o findMatches.o mainAux.o main.o readFormInput.o readGenome.o makeTables.o recursiveEnter.o timer.o utilities.o hsort2.o boolsyntax.o reportClusters.o newbool.o fullannot.o
 
 scanner: $(OBJ)
-	cc $(OBJ)  -o $@
+	cc -lrt $(OBJ)  -o $@
 
 .c.o: 
 	cc -O  -c $<

@@ -249,8 +249,8 @@ normalStart:
 
    
 #ifdef TIMING
-   sprintf(output, "Time to read genome was %d milliseconds\n",
-      getDiffMillisecs(&time1, &time2));
+   sprintf(output, "Time to read genome was %ld nanoseconds\n",
+      getDiffNanosecs(&time1, &time2));
    both(output);
 #endif
 
@@ -468,8 +468,8 @@ outerLoop:
    hsort2(avbase, pvbase, av - avbase);
    getTime(&time2);
 #ifdef TIMING
-   sprintf(output, "The search took %d milliseconds, found %d matches\n",
-       getDiffMillisecs(&time1, &time2), (int)(av - avbase));
+   sprintf(output, "The search took %ld nanoseconds, found %d matches\n",
+       getDiffNanosecs(&time1, &time2), (int)(av - avbase));
    both(output);
 #endif
  

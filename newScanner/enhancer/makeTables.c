@@ -135,8 +135,8 @@ LOOKUPWORD* makeTables(motifDes *motifs) {
    
    getTime(&time2);
 #ifdef TIMING
-   printf ("Table generation took %d milliseconds.\n",
-      getDiffMillisecs(&time1, &time2));
+   printf ("Table generation took %d nanoseconds.\n",
+      getDiffNanosecs(&time1, &time2));
 #endif
    return matches;   //return pointer to tables
 }

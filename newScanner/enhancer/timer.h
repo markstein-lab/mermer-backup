@@ -14,6 +14,7 @@ extern "C"
 #endif
 
 void getTime(TIMEVAL *t);
+long getDiffNanosecs(TIMEVAL *first, TIMEVAL *second);
 
 #if defined(__cplusplus)
 }

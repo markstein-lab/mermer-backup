@@ -406,13 +406,13 @@ continueForAx: ;
 #ifdef TIMING
       getTime(&time2);
       if (trial == 0) {
-         sprintf(line, "Time to count hits is %d ms\n",
-            getDiffMillisecs(&time1, &time2));
+         sprintf(line, "Time to count hits is %ld ns\n",
+            getDiffNanosecs(&time1, &time2));
          printBoth = 0;  //suppress further printing to .txt file
          printNone = 1;  //suppress printing further results
       } else {
-         sprintf(line, "Time to generate output is %d ms\n",
-            getDiffMillisecs(&time1, &time2));
+         sprintf(line, "Time to generate output is %ld ns\n",
+            getDiffNanosecs(&time1, &time2));
       }
       both(line);
 #endif

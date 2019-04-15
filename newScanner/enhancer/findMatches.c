@@ -463,7 +463,7 @@ void identifyMatches(LOOKUPWORD mask, //state mask identifying matches
                       //index of where hit found 
                       m = chrIndex(findchrm(position)); 
                    }
-                   n= motifs[k].name - 'A';
+                   n= motifs[k].name;
                    if ((whichMotifs & (1<<n)) == 0) {
                       bumpcount(n, m);
                    }

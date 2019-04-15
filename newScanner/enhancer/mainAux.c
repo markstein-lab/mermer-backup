@@ -87,7 +87,7 @@ int mainAux (int argc, char *argv[]) {
    unsigned char **strings;
    int repetitions;
    int motifCount;
-   char patternID;
+   int patternID;
    void uniquename(char *result);
 
    LOOKUPWORD *tables;
@@ -262,7 +262,7 @@ normalStart:
 outerLoop:
    //here, we allow the user to input motifs 
    motifCount = 0;
-   patternID = 'A';
+   patternID = 0;
    errcount = 0;
 
    k = 0;
@@ -280,7 +280,7 @@ outerLoop:
     do{
         skipToSearch = false; 
         while(fromTerminal != 0){
-               sprintf(output, "Type in motif %c:", patternID);
+               sprintf(output, "Type in motif %d:", patternID);
                both(output);
                getLine(line, stdin);   //read a motif from terminal
                fprintf(save, "%s\n", line);
@@ -311,14 +311,14 @@ outerLoop:
         }
           //}
         if(!skipToSearch){
-           for (i = 'A'; i < 'K'; i++) {
-              line[0] = 'S'; line[1] = i; line[2] = 0; //construct name of field i
+           for (i = 0; i < 1000; i++) {
+			   line[0] = 'S'; snprintf(line + 1, sizeof(line), "%d", i); //construct name of field i
               //result = sassoc(line, terminalInput);
               sprintf(result, "%s", sassoc(line, terminalInput));
               if (strlen(result) == 0) continue;
               j = fixinput(result);
               if (j) {//improper input detected
-                 sprintf (output, "In field %c improper input character %c in position %d\n", i, result[i-1], j);
+                 sprintf (output, "In field %d improper input character %c in position %d\n", i, result[i-1], j);
                  both(output);
                  errcount++;
               }
@@ -520,11 +520,11 @@ outerLoop:
       for (i = 0; i < motifCount; i++) {
          if (motifs[i].direction == '-') continue;
          printf("&nbsp&nbsp");
-         sprintf(output, "    %c: ", motifs[i].name);
+         sprintf(output, "    %d: ", motifs[i].name);
          both(output);
          if (fromTerminal==0) {
             printf("<font style='BACKGROUND-COLOR:%s'>",
-               colorName[motifs[i].name - 'A']);
+               colorName[motifs[i].name]);
          }
          sprintf(output,"%s\n", motifs[i].motif);
          both(output);

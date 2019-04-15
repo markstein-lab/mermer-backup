@@ -49,7 +49,7 @@ void reportClusters() {
    char lookup[] = "ACGT";
    int clusterSize, chCount, clIndex, motifEnd;
    TIMEVAL time1, time2;
-   char searchStrings[1000];
+   char searchStrings[100000];
 
 #define PRLINE(s)   if(fromTerminal == 0) both(s); else fprintf(save,"%s",s)
 #define bumpcount(i, j) (summaryData[i * (numberOfChromosomes+1) + j]++)
@@ -123,7 +123,7 @@ void reportClusters() {
                signature[i] = pz->name;
                longsig[2*i] = signature[i];
                i++;
-               counts[signature[i-1] - 'A'][0]++;
+               counts[signature[i-1]][0]++;
                if (isPalindrome) {
 #ifdef PETER
                   longsig[2*i-1] = '*';
@@ -131,8 +131,8 @@ void reportClusters() {
                   longsig[2*i-1] = ' ';
 #endif
    
-                  counts[signature[i-1] - 'A'][1]++;
-                  counts[signature[i-1] - 'A'][2]++;
+                  counts[signature[i-1]][1]++;
+                  counts[signature[i-1]][2]++;
                }
                else if (pz->direction == '+') {
 #ifdef PETER
@@ -140,7 +140,7 @@ void reportClusters() {
 #else
                   longsig[2*i - 1] = ' ';
 #endif
-                  counts[signature[i-1] - 'A'][1]++;
+                  counts[signature[i-1]][1]++;
                }
                else {
 #ifdef PETER
@@ -148,7 +148,7 @@ void reportClusters() {
 #else
                   longsig[2*i - 1] = ' ';
 #endif
-                  counts[signature[i-1] - 'A'][2]++;
+                  counts[signature[i-1]][2]++;
                }
                motifStart[i-1] = *az - *ax;
                sprintf(decnumber, "%c%ld,", longsig[2*i - 1], *az - *ax);
@@ -339,7 +339,7 @@ void reportClusters() {
                               if (motifIndex >= numberOfMotifs) motifIndex = 0;
                               //highlight motif in appropriate color
                               strcat(line, "<FONT style='BACKGROUND-COLOR:");
-                              strcat(line, colorName[motifs[motifIndex].name-'A']);
+                              strcat(line, colorName[motifs[motifIndex].name]);
                               strcat(line, "'>");
                               motifEnd = motifStart[clIndex] + 
                                  strlen(motifs[motifIndex].motif)

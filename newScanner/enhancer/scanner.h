@@ -54,7 +54,7 @@ typedef struct mDes motifDes, *desPtr;
 struct mDes {
    char *motif;
    char *reverse;
-   char name;
+   int name;
    char direction;
    } ;
       

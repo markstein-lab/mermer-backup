@@ -266,8 +266,8 @@ void outputSummary() {
       sum = 0;
       //print a row of information:
       if (fromTerminal == 0) printf("<tr>");   //start new table row
-      sprintf(output, " Motif %c", motifs[2*i].name);
-      k = motifs[2*i].name - 'A';
+      sprintf(output, " Motif %d", motifs[2*i].name);
+      k = motifs[2*i].name;
       tableOutput(output);
       for (j = 0; j < numberOfChromosomes; j++) {
          sum = sum + summaryData[k*(numberOfChromosomes + 1) + j];
@@ -284,7 +284,7 @@ void outputSummary() {
    for (j = 0; j <= numberOfChromosomes; j++) {
       sum = 0;
       for (i = 0; i < numberOfMotifs/2; i++) {
-         k = motifs[2*i].name - 'A';
+         k = motifs[2*i].name;
          sum = sum + summaryData[k*(numberOfChromosomes + 1) + j];
       }
       summaryData[(numberOfMotifs/2)*(numberOfChromosomes+1) + j] = sum;

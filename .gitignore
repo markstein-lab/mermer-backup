@@ -1,2 +1,10 @@
 __pycache__/
 .venv/
+
+newScanner/readfasta
+newScanner/enhancer/scanner
+newScanner/enhancer/scanner.tar
+newScanner/enhancer/resultfiles/
+
+*.o
+*.exe

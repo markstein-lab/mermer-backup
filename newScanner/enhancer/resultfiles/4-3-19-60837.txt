@@ -1,0 +1,2 @@
+Welcome to scanner 0.4 (beta) last updated 07/26/2018
+A log of this run will be found in file 4-3-19-60837

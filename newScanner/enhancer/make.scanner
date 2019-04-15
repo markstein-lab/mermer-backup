@@ -1,0 +1,31 @@
+# Original files: readfasta from email from Peter Markstein (July 19)
+# and also: scanner from tarball from Peter Markstein (July 10)
+
+# Note: download the 3 patches from Peter Markstein for scanner (email from July 19 2018)
+# Also download the 'bug fix' to scanner: mainAux.c on July 19
+# Patch with the new scanner: reportClusters.c from July 20
+# Patch readfasta: readfasta.c with the one from Peter Markstein (July 24, 3:40am)
+# Patch scanner: mainAux.c with version from Peter Markstein (Jul7 24, 7:47pm)
+# Patch readfasta: readfasta.c from Peter Markstein, 6/25 at 12:21PM
+# Patch readfasta: readfacta.c from Peter Markstein, 6/25 at 6:01 PM. FINAL
+
+# Patch scanner: mainAux.c, readGenome.c, scanner.h, utilities.c from 7/26 8:12pm, reportClusters.c from 8:35pm
+# Patch scanner: mainAux.c, reportClusters.c, scanner.h from 7/26, 8:48pm
+# Patch scanner: mainAux.c, reportClusters.c, utilities.c from 7/29 12:03am
+# For this analysis, we're using the version current as of 7/29 12:03am
+
+OBJ = displayUTRHit.o findMatches.o mainAux.o main.o readFormInput.o readGenome.o makeTables.o recursiveEnter.o timer.o utilities.o hsort2.o boolsyntax.o reportClusters.o newbool.o fullannot.o
+
+scanner: $(OBJ)
+	cc $(OBJ)  -o $@
+
+.c.o: 
+	cc -O  -c $<
+
+$(OBJ) : scanner.h
+
+readFormInput.o : htmlForm.h
+
+
+clean:
+	rm -f $(OBJ)

@@ -48,7 +48,7 @@ int do_the_search(unsigned long int start, //where to start in the genome
 #ifdef STATS
    //int counts[500];
 #endif
-   for (int i = 0; i < 500; i++) counts[i] = 0;
+   for (i = 0; i < 500; i++) counts[i] = 0;
    unsigned int temp;
    void identifyMatches(LOOKUPWORD, unsigned long int, int);
    //unsigned long int *oldav;

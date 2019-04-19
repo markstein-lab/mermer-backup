@@ -430,7 +430,6 @@ outerLoop:
    fprintf(save, "%d\n", repetitions);
 #endif
 
-   getTime(&time1);
    for (i = 0; i < repetitions; i++) {
       av = avbase;
       pv = pvbase;
@@ -438,9 +437,16 @@ outerLoop:
          numberOfMatches = 0;
          for (j = 0; j < numberOfGenes; j++) {
              relocation = arm[map[geneList[j]].annot_number];
+			 getTime(&time1);
              numberOfMatches += do_the_search(
                 map[geneList[j]].start - geneDistance + relocation,
                 map[geneList[j]].stop + geneDistance + relocation);
+			 getTime(&time2);
+#ifdef TIMING
+             sprintf(output, "The search took %ld nanoseconds, found %d matches\n",
+					 getDiffNanosecs(&time1, &time2), (int)(av - avbase));
+			 both(output);
+#endif
          }
       } else if (((utr3 | utr5 | orf | cds) == 0) && (geneDistance)){
          numberOfMatches = 0;
@@ -448,31 +454,46 @@ outerLoop:
          for (j = 0; j < mapSize; j++) {
              relocation = arm[map[j].annot_number];
              sum += (map[j].stop - map[j].start + 2*geneDistance);
+			 getTime(&time1);
              numberOfMatches += do_the_search(
                 map[j].start - geneDistance + relocation,
                 map[j].stop + geneDistance + relocation);
+			 getTime(&time2);
+#ifdef TIMING
+             sprintf(output, "The search took %ld nanoseconds, found %d matches\n",
+					 getDiffNanosecs(&time1, &time2), (int)(av - avbase));
+             both(output);
+#endif
          }
   printf("Looked at %u nucleotides<br>", sum);
       } else {
          if (ltdSearch == 0) {
+			getTime(&time1);
             numberOfMatches = do_the_search(0, DNALen);
+			getTime(&time2);
+#ifdef TIMING
+            sprintf(output, "The search took %ld nanoseconds, found %d matches\n",
+					getDiffNanosecs(&time1, &time2), (int)(av - avbase));
+            both(output);
+#endif
          } else {
             j = chrCont(chrLimit);
             first = arm[j];
             k = nextCont(j);
             last = arm[k]-1;
+			getTime(&time1);
             numberOfMatches = do_the_search(first, last);
+			getTime(&time2);
+#ifdef TIMING
+			sprintf(output, "The search took %ld nanoseconds, found %d matches\n",
+                    getDiffNanosecs(&time1, &time2), (int)(av - avbase));
+			both(output);
+#endif
          }
       }
    }
    hsort2(avbase, pvbase, av - avbase);
-   getTime(&time2);
-#ifdef TIMING
-   sprintf(output, "The search took %ld nanoseconds, found %d matches\n",
-       getDiffNanosecs(&time1, &time2), (int)(av - avbase));
-   both(output);
-#endif
- 
+
    bool goToSearch = false;
    do{
        if (fromTerminal == 0) {

@@ -359,8 +359,8 @@ int do_the_search(unsigned long int start, //where to start in the genome
                    counts[3]++;
                 #endif
                }
-               depth = 4;
             }
+			depth = 4;
                    index = getDNA(i);
                    for (j = depth; j > 0; j--) {
                       mask[j] = mask[j-1] & matchTable(j, index);
